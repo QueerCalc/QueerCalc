@@ -4,6 +4,7 @@
 use eframe::egui::{self, CentralPanel, Visuals};
 use egui_plotter::EguiBackend;
 use plotters::prelude::*;
+pub mod math;
 
 fn main() {
     let native_options = eframe::NativeOptions::default();
