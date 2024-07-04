@@ -32,6 +32,9 @@
             xorg.libXcursor
             xorg.libXrandr
             xorg.libXi
+            freeglut
+            libGL
+            libxkbcommon
           ] ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
             pkgs.libiconv
           ];
