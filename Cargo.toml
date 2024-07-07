@@ -1,9 +1,10 @@
-[package]
-name = "queercalc"
-version = "0.1.0"
-edition = "2021"
+[workspace]
+members = [
+    "gui",
+    "math"
+]
+workspace.resolver = "2"
 
-[dependencies]
-eframe = "0.22.0"
-egui-plotter = "0.3.0"
-plotters = "0.3.6"
+[workspace.dependencies]
+gui = { path = "./gui" }
+math = { path = "./math" }
