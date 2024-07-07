@@ -1,10 +1,10 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 // hide console window on Windows in release
+use math;
 use eframe::egui::{self, CentralPanel, Visuals};
 use egui_plotter::EguiBackend;
 use plotters::prelude::*;
-pub mod math;
 
 fn main() {
     let native_options = eframe::NativeOptions::default();
