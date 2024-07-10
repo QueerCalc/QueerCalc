@@ -3,7 +3,7 @@ members = [
     "gui",
     "math"
 ]
-workspace.resolver = "2"
+resolver = "2"
 
 [workspace.dependencies]
 gui = { path = "./gui" }
