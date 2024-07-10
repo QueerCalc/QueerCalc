@@ -16,16 +16,20 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+        inherit (pkgs) lib;
 
         craneLib = crane.mkLib pkgs;
 
-        commonArgs = {
+        queercalc = craneLib.buildPackage {
+          pname = "queercalc";
+          version = "0.1.0";
+
           src = craneLib.cleanCargoSource ./.;
           strictDeps = true;
 
           buildInputs = with pkgs; [
             pkg-config
-          ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [
+          ] ++ lib.optionals pkgs.stdenv.isLinux [
             fontconfig
             wayland-scanner.out
             xorg.libX11
@@ -35,20 +39,13 @@
             freeglut
             libGL
             libxkbcommon
-          ] ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
-            pkgs.libiconv
+          ] ++ lib.optionals pkgs.stdenv.isDarwin [
+            libiconv
           ];
         };
-
-        queercalc = craneLib.buildPackage (commonArgs // {
-          cargoArtifacts = craneLib.buildDepsOnly commonArgs;
-          LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath commonArgs.buildInputs}";
-        });
       in
       {
-        checks = {
-          inherit queercalc;
-        };
+        checks = { inherit queercalc; };
 
         packages.default = queercalc;
 
@@ -58,8 +55,8 @@
 
         devShells.default = craneLib.devShell {
           checks = self.checks.${system};
-          packages = [];
-          LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath commonArgs.buildInputs}";
+          packages = queercalc.buildInputs;
+          LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath queercalc.buildInputs}";
         };
       });
 }
