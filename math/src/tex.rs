@@ -21,6 +21,11 @@ fn serialize(toks: &[Token], out: &mut String) {
                 *out += "}{";
                 serialize(c2, out);
                 *out += "}";
+            },
+            Token::Paren(c) => {
+                *out += "\\left(";
+                serialize(c, out);
+                *out += "\\right)";
             }
         }
     }
