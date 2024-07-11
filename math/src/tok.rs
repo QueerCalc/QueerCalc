@@ -11,6 +11,10 @@ pub enum Token {
     Sup(Vec<Token>),
     /// (Numerator, denominator).
     Frac(Vec<Token>, Vec<Token>),
+    /// A parenthesized expression.
+    /// This is required to be its own variant,
+    /// since parens can't be imbalanced, and their size depends on the inner content.
+    Paren(Vec<Token>),
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -18,6 +22,7 @@ pub enum TokenType {
     Glyph,
     Sup,
     Frac,
+    Paren,
 }
 
 impl From<&Token> for TokenType {
@@ -26,6 +31,7 @@ impl From<&Token> for TokenType {
             Token::Glyph(_) => TokenType::Glyph,
             Token::Sup(_) => TokenType::Sup,
             Token::Frac(_, _) => TokenType::Frac,
+            Token::Paren(_) => TokenType::Paren,
         }
     }
 }
@@ -174,7 +180,7 @@ impl Cursor {
         let ptr;
         match &mut region[idx] {
             Token::Glyph(_) => return false,
-            Token::Sup(children) | Token::Frac(children, _) => {
+            Token::Sup(children) | Token::Frac(children, _) | Token::Paren(children) => {
                 ptr = NonNull::from(children);
             }
         }
@@ -257,6 +263,8 @@ impl Cursor {
                     break;
                 }
             } else {
+                // TODO this is actually not the same as the MathQuill impl (it joins glyphs).
+                // should be rectified
                 match region[rev_idx] {
                     Token::Glyph(c) => {
                         if valid_var_name(c) {
@@ -265,6 +273,7 @@ impl Cursor {
                             consuming_number = true;
                         }
                     }
+                    Token::Paren(_) => break,
                     Token::Frac(_, _) => break,
                     Token::Sup(_) => { /* attached to a prim that is further behind */ }
                 }
